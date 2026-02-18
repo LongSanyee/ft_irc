@@ -6,7 +6,12 @@
 class Client
 {
 public:
-    
+
+private:
+    bool haspass;
+    bool hasnick;
+    bool hasinfo;
+    bool isregistered;
 };
 
 
