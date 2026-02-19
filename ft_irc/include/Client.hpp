@@ -12,6 +12,7 @@ private:
     bool hasnick;
     bool hasinfo;
     bool isregistered;
+    std::string Data;
 };
 
 

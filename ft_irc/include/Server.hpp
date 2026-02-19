@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <cstdlib>
 #include <map>
+#include <iostream>
 
 class Server
 {
@@ -19,6 +20,7 @@ public:
     ~Server();
     void setsocket();
     void eventloop();
+    void addclient();
 private:
     std::vector<struct pollfd> fds;
     std::map<int, Client*> clients;

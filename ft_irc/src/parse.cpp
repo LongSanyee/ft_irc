@@ -1,5 +1,17 @@
 #include "../include/irc.hpp"
 
+
+std::vector<std::string> split(std::string str)
+{
+    std::vector<std::string> r;
+    std::stringstream t(str);
+    std::string words;
+
+    while ((t >> words))
+        r.push_back(words);
+    return r;
+}
+
 int invalid(std::string t)
 {
     int i = 0;
