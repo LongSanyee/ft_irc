@@ -2,15 +2,15 @@
 #define CLIENT_HPP
 
 #include <list>
-#include "irc.hpp"
-
+#include <iostream>
+#include <sstream> 
+#include "Server.hpp"
 
 
 class Client
 {
 public:
     void setdata(std::string str);
-
 private:
     bool haspass;
     bool hasnick;

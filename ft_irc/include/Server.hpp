@@ -6,7 +6,7 @@
 #include <poll.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include "../include/Client.hpp"
+#include "Client.hpp"
 #include <errno.h>
 #include <stdio.h>
 #include <cstdlib>
@@ -14,6 +14,8 @@
 #include <iostream>
 #include <unistd.h>
 #include <algorithm>
+
+class Client;
 
 class Server
 {
@@ -30,7 +32,6 @@ private:
     int port;
     std::string password;
 };
-
 
 
 #endif
