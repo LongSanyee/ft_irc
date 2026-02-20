@@ -12,11 +12,13 @@
 #include <cstdlib>
 #include <map>
 #include <iostream>
+#include <unistd.h>
+#include <algorithm>
 
 class Server
 {
 public:
-    Server();
+    Server(char *pass, char *port);
     ~Server();
     void setsocket();
     void eventloop();
@@ -25,6 +27,8 @@ private:
     std::vector<struct pollfd> fds;
     std::map<int, Client*> clients;
     int server_fd;
+    int port;
+    std::string password;
 };
 
 

@@ -1,11 +1,15 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
+#include <list>
+#include "irc.hpp"
+
 
 
 class Client
 {
 public:
+    void setdata(std::string str);
 
 private:
     bool haspass;
@@ -13,6 +17,9 @@ private:
     bool hasinfo;
     bool isregistered;
     std::string Data;
+    std::string nickname;
+    std::string username;
+    std::list<std::string> channels;
 };
 
 

@@ -1,9 +1,11 @@
 #include "../include/Server.hpp"
 
 
-Server::Server()
+Server::Server(char *pass, char *port)
 {
-
+	password = pass;
+	std::stringstream t(port);
+	t >> this->port;
 }
 
 Server::~Server()
@@ -21,7 +23,7 @@ void Server::setsocket()
 	}
 	struct sockaddr_in addr;
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(6667);
+	addr.sin_port = htons(this->port);
 	addr.sin_addr.s_addr = INADDR_ANY;
 	if (bind(server_fd, (struct sockaddr*)&addr, sizeof(addr)) < 0)
 	{
@@ -57,6 +59,7 @@ void Server::addclient()
 					fds.push_back(n);
 					clients[fd] = new Client;
 				}
+				i++;
             }
 			else
 			{
@@ -65,14 +68,21 @@ void Server::addclient()
 				if (n > 0)
 				{
 					std::string str(buff, n);
+					clients[fds[i].fd]->setdata(str);
+					i++;
 				}
 				else if (n == 0)
 				{
-
+					delete clients[fds[i].fd];
+					clients.erase(fds[i].fd);
+					close(fds[i].fd);
+					std::swap(fds[i], fds[fds.size() - 1]);
+					fds.pop_back();
 				}
 			}
         }
-		i++;
+		else
+			i++;
     }
 }
 

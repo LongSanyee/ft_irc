@@ -5,7 +5,6 @@
 #include <iostream>
 #include <cctype>
 #include "Server.hpp"
-#include "Client.hpp"
 
 
 int parseargs(char *port, char *pass);
