@@ -11,6 +11,7 @@ class Client
 {
 public:
     void setdata(std::string str);
+    std::string& getdata();
 private:
     bool haspass;
     bool hasnick;
@@ -19,7 +20,6 @@ private:
     std::string Data;
     std::string nickname;
     std::string username;
-    std::list<std::string> channels;
 };
 
 

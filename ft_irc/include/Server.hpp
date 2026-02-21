@@ -2,6 +2,7 @@
 #define SERVER_HPP
 
 #include <vector>
+#include "Command.hpp"
 #include <sys/socket.h>
 #include <poll.h>
 #include <netinet/in.h>

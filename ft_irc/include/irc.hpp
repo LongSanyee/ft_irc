@@ -9,6 +9,5 @@
 
 
 int parseargs(char *port, char *pass);
-std::vector<std::string> split(std::string str);
 
 #endif

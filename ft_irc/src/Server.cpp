@@ -69,6 +69,19 @@ void Server::addclient()
 				{
 					std::string str(buff, n);
 					clients[fds[i].fd]->setdata(str);
+					std::string tmp = "\r\n";
+					size_t pos = 0;
+					std::string t = clients[fds[i].fd]->getdata();
+					while (pos != std::string::npos)
+					{
+						pos = t.find(tmp);
+						if (pos != std::string::npos)
+						{
+							std::string extracted = t.substr(0, pos + tmp.size());
+							clients[fds[i].fd]->getdata().erase(0, pos + tmp.size());
+							Command cmd(extracted);
+						}
+					}
 					i++;
 				}
 				else if (n == 0)
