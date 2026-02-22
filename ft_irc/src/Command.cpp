@@ -53,6 +53,13 @@ void Command::parsecmd(std::string& ex)
         ex.clear();
     }
     params = split(ex);
+    std::cout << cmd << std::endl;
+    int i = 0;
+    while (i < params.size())
+    {
+        std::cout << params[i] << std::endl;
+        i++;
+    }
 }
 
 Command::Command(std::string extracted)

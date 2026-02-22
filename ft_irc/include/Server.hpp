@@ -26,6 +26,9 @@ public:
     void setsocket();
     void eventloop();
     void addclient();
+    void sendmsg(int fd, std::string message);
+    void receivedata(int &i);
+    void addclient(int &i);
 private:
     std::vector<struct pollfd> fds;
     std::map<int, Client*> clients;
