@@ -15,7 +15,7 @@ Server::~Server()
 
 void Server::sendmsg(int fd, std::string message)
 {
-	
+
 }
 
 void Server::setsocket()
