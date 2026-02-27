@@ -27,10 +27,12 @@ public:
     void eventloop();
     void addclient();
     void sendmsg(int fd, std::string message);
+    void broadcastmsg(std::string message);
     void receivedata(int &i);
     void addclient(int &i);
     std::string get_passwd();
     void disconnect_client(int fd);
+    bool verify_nick(std::string nick);
 private:
     std::vector<struct pollfd> fds;
     std::map<int, Client*> clients;

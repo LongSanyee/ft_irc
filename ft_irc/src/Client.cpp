@@ -42,3 +42,18 @@ void Client::set_hasPass(bool t)
 {
     this->haspass = t;
 };
+std::string Client::get_nickname()
+{
+    return this->nickname;
+};
+
+void Client::set_nickname(std::string nick)
+{
+    this->hasnick = true;
+    this->nickname = nick;
+};
+
+std::string Client::get_username()
+{
+    return this->username;
+};

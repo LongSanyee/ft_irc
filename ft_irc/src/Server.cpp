@@ -18,6 +18,14 @@ void Server::sendmsg(int fd, std::string message)
 	send(fd, message.c_str(), message.size(), MSG_NOSIGNAL);
 }
 
+void Server::broadcastmsg(std::string message)
+{
+	for (struct pollfd socket : fds)
+	{
+		sendmsg(socket.fd, message);
+	}
+}
+
 void Server::setsocket()
 {
 	this->server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -142,3 +150,12 @@ std::string Server::get_passwd()
 	return this->password;
 }
 
+bool Server::verify_nick(std::string nick)
+{
+	for (int i = 0; i < this->clients.size(); i++)
+	{
+		if (this->clients[i]->get_nickname() == nick)
+			return false;
+	}
+	return true;
+};

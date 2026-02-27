@@ -17,8 +17,11 @@ public:
     bool get_hasInfo();
     bool get_isregistred();
     int  get_fd();
+    std::string get_nickname();
+    std::string get_username();
     void set_fd(int fd);
     void set_hasPass(bool t);
+    void set_nickname(std::string nick);
 
 private:
     int fd;

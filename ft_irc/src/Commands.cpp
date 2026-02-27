@@ -5,6 +5,46 @@
 #include "../include/Command.hpp"
 
 
+bool valid_nick(std::string nm)
+{
+    std::string valid = "[]\\^_`{|}abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    if (nm.empty() || nm.length() > 9 || valid.find(nm[0]) == std::string::npos)
+        return false;
+    for (int i =0;i < nm.length();i++)
+    {
+        if (!isdigit(nm[i]) && valid.find(nm[i]) == std::string::npos && nm[i] != '-')
+            return false;
+    }
+    return true;
+}
+
+void execute_nick(Command &cmd, Client &cl, Server &ser)
+{
+    if(!ser.verify_nick(cmd.getparams()[0]))
+    {
+        ser.sendmsg(cl.get_fd(), ":server 433 * <nick> :Nickname is already in use");
+        return;
+    }
+    if (cmd.getparams()[0].empty())
+    {
+        ser.sendmsg(cl.get_fd(), ":server 431 * :No nickname given");
+        return;
+    }
+    if (!valid_nick(cmd.getparams()[0]))
+    {
+        ser.sendmsg(cl.get_fd(), ":server 432 * <nick> :Erroneous nickname");
+        return;
+    }
+    if (!cl.get_hasNick())
+    {
+        cl.set_nickname(cmd.getparams()[0]);
+    }
+    else
+    {
+        ser.broadcastmsg(":"+cl.get_nickname()+"!"+cl.get_username()+"@");
+    }
+}
+
 void execute_pass(Command &cmd, Client &cl, Server &ser)
 {
     if (cl.get_isregistred())
@@ -25,6 +65,8 @@ void execute_pass(Command &cmd, Client &cl, Server &ser)
     }
     cl.set_hasPass(true);
 }
+
+
 void execute_cmd(Command &cmd, Client &cl, Server &ser)
 {
     if (cmd.getcmd() == "PASS") {execute_pass(cmd,cl,ser);}
