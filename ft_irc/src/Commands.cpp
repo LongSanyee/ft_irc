@@ -69,6 +69,8 @@ void execute_pass(Command &cmd, Client &cl, Server &ser)
 
 void execute_quit(Command &cmd, Client &cl, Server &ser)
 {
+    std::string t = ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" QUIT :Client Quit";
+    std::string s = ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" QUIT :"+cmd.getparams()[0];
     if (cl.get_isregistred())
     {
         std::vector<std::string> &tmp = cl.getclchannels();
@@ -78,19 +80,23 @@ void execute_quit(Command &cmd, Client &cl, Server &ser)
             it = ser.getmap().find(tmp[i]);
             if (it != ser.getmap().end())
             {
+                Channel *ch = it->second;
                 if (cmd.getparams().empty())
-                    ser.getmap()[tmp[i]]->sendtoall(ser, ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" QUIT :Client Quit");
+                    ch->sendtoall(ser, t);
                 else
-                    ser.getmap()[tmp[i]]->sendtoall(ser, ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" QUIT :"+cmd.getparams()[0]);
+                    ch->sendtoall(ser, s);
+                ch->getclients().erase(cl.get_nickname());
+                if (ch->getclients().empty())
+                {
+                    delete ch;
+                    ser.getmap().erase(it);
+                }
             }
         }
-        ser.disconnect_client(cl.get_fd());
     }
     else
-    {
         ser.sendmsg(cl.get_fd(), "ERROR: Closing Link (User Quit)\r\n");
-        ser.disconnect_client(cl.get_fd());
-    }
+    ser.disconnect_client(cl.get_fd());
 }
 
 void execute_cmd(Command &cmd, Client &cl, Server &ser)

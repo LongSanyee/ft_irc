@@ -34,3 +34,8 @@ void Channel::sendtoall(Server &ser, std::string message)
         ser.sendmsg(it->second->get_fd(), message);
     }
 }
+
+std::map<std::string, Client *>& Channel::getclients()
+{
+    return clients;
+}

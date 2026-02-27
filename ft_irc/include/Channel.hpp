@@ -14,6 +14,7 @@ public:
     std::string gettopic();
     std::string getname();
     void sendtoall(Server &ser, std::string message);
+    std::map<std::string, Client *>& getclients();
 private:
     std::string name;
     std::string topic;
