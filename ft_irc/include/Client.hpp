@@ -4,6 +4,7 @@
 #include <list>
 #include <iostream>
 #include <sstream> 
+#include <vector>
 #include "Server.hpp"
 
 

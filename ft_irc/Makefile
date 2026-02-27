@@ -1,6 +1,6 @@
 NAME = ircserv
 
-SRC = src/main.cpp src/parse.cpp src/Server.cpp src/Client.cpp src/Command.cpp
+SRC = src/main.cpp src/parse.cpp src/Server.cpp src/Client.cpp src/Command.cpp src/Commands.cpp src/Channel.cpp
 
 OBJ = $(SRC:.cpp=.o)
 

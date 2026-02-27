@@ -18,6 +18,7 @@
 #include <algorithm>
 
 class Client;
+class Channel;
 
 class Server
 {

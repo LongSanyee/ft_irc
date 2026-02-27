@@ -2,8 +2,13 @@
 #define CHANNEL_HPP
 
 #include <map>
+#include "Client.hpp"
+#include "Server.hpp"
 #include "irc.hpp"
 
+class Server;
+class Client;
+class Command;
 
 class Channel
 {
