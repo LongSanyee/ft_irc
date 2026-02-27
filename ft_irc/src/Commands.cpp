@@ -27,7 +27,7 @@ void execute_pass(Command &cmd, Client &cl, Server &ser)
 }
 void execute_cmd(Command &cmd, Client &cl, Server &ser)
 {
-    if (cmd.getcmd() == "PASS") {  }
+    if (cmd.getcmd() == "PASS") {execute_pass(cmd,cl,ser);}
     else if (cmd.getcmd() == "NICK") { }
     else if (cmd.getcmd() == "USER") {  }
     else if (cmd.getcmd() == "QUIT") {  }

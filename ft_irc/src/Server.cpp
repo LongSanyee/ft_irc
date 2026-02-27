@@ -15,7 +15,7 @@ Server::~Server()
 
 void Server::sendmsg(int fd, std::string message)
 {
-	send(fd, message.c_str(), message.size(), MSG_DONTWAIT);
+	send(fd, message.c_str(), message.size(), MSG_NOSIGNAL);
 }
 
 void Server::setsocket()
@@ -43,6 +43,25 @@ void Server::setsocket()
 	fds.push_back({server_fd, POLLIN, 0});
 }
 
+void Server::disconnect_client(int fd)
+{
+    for (size_t i = 0; i < fds.size(); i++)
+    {
+        if (fds[i].fd == fd)
+        {
+            std::swap(fds[i], fds[fds.size() - 1]);
+            fds.pop_back();
+            break ;
+        }
+    }
+    if (clients.count(fd))
+    {
+        delete clients[fd];
+        clients.erase(fd);
+    }
+    close(fd);
+}
+
 void Server::receivedata(int &i)
 {
 	char buff[1024] =  {0};
@@ -67,11 +86,7 @@ void Server::receivedata(int &i)
 	}
 	else if (n == 0)
 	{
-		delete clients[fds[i].fd];
-		clients.erase(fds[i].fd);
-		close(fds[i].fd);
-		std::swap(fds[i], fds[fds.size() - 1]);
-		fds.pop_back();
+		disconnect_client(fds[i].fd);
 	}
 }
 
@@ -126,3 +141,4 @@ std::string Server::get_passwd()
 {
 	return this->password;
 }
+

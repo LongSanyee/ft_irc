@@ -30,6 +30,7 @@ public:
     void receivedata(int &i);
     void addclient(int &i);
     std::string get_passwd();
+    void disconnect_client(int fd);
 private:
     std::vector<struct pollfd> fds;
     std::map<int, Client*> clients;
