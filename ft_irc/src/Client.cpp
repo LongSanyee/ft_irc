@@ -11,3 +11,34 @@ std::string& Client::getdata()
     return this->Data;
 }
 
+bool Client::get_hasPass()
+{
+    return haspass;
+};
+bool Client::get_hasNick()
+{
+    return hasnick;
+};
+bool Client::get_hasInfo()
+{
+    return hasinfo;
+};
+bool Client::get_isregistred()
+{
+    return isregistered;
+}
+
+void Client::set_fd(int fd)
+{
+    this->fd = fd;
+};
+
+int Client::get_fd()
+{
+    return this->fd;
+}
+
+void Client::set_hasPass(bool t)
+{
+    this->haspass = t;
+};

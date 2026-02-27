@@ -12,7 +12,16 @@ class Client
 public:
     void setdata(std::string str);
     std::string& getdata();
+    bool get_hasPass();
+    bool get_hasNick();
+    bool get_hasInfo();
+    bool get_isregistred();
+    int  get_fd();
+    void set_fd(int fd);
+    void set_hasPass(bool t);
+
 private:
+    int fd;
     bool haspass;
     bool hasnick;
     bool hasinfo;

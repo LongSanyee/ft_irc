@@ -15,7 +15,7 @@ Server::~Server()
 
 void Server::sendmsg(int fd, std::string message)
 {
-
+	send(fd, message.c_str(), message.size(), MSG_DONTWAIT);
 }
 
 void Server::setsocket()
@@ -60,6 +60,7 @@ void Server::receivedata(int &i)
 				std::string extracted = str.substr(0, pos + tmp.size());
 				str.erase(0, pos + tmp.size());
 				Command cmd(extracted);
+				execute_cmd(cmd, *clients[fds[i].fd], *this);
 			}
 		}
 		i++;
@@ -87,6 +88,7 @@ void Server::addclient(int &i)
 		n.revents = 0;
 		fds.push_back(n);
 		clients[fd] = new Client;
+		clients[fd]->set_fd(fd);
 	}
 	i++;
 }
@@ -118,4 +120,9 @@ void Server::eventloop()
 			addclient();
         }
     }
+}
+
+std::string Server::get_passwd()
+{
+	return this->password;
 }

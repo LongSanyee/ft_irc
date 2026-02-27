@@ -29,6 +29,7 @@ public:
     void sendmsg(int fd, std::string message);
     void receivedata(int &i);
     void addclient(int &i);
+    std::string get_passwd();
 private:
     std::vector<struct pollfd> fds;
     std::map<int, Client*> clients;
@@ -37,5 +38,5 @@ private:
     std::string password;
 };
 
-
+void execute_cmd(Command &cmd, Client &cl, Server &ser);
 #endif
