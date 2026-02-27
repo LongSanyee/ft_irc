@@ -57,3 +57,13 @@ std::string Client::get_username()
 {
     return this->username;
 };
+
+void Client::sethostname(std::string host)
+{
+    hostname = host;
+}
+
+std::string Client::gethost()
+{
+    return this->hostname;
+}

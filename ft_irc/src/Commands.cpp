@@ -41,7 +41,7 @@ void execute_nick(Command &cmd, Client &cl, Server &ser)
     }
     else
     {
-        ser.broadcastmsg(":"+cl.get_nickname()+"!"+cl.get_username()+"@");
+        ser.broadcastmsg(":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost() + "NICK : "+cmd.getparams()[0]);
     }
 }
 

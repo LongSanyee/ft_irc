@@ -103,6 +103,7 @@ void Server::addclient(int &i)
     struct sockaddr_in temp;
 	socklen_t t = sizeof(temp);
 	int fd = accept(fds[i].fd, (sockaddr *)&temp, &t);
+	char *addr = inet_ntoa(temp.sin_addr);
 	if (fd >= 0)
 	{
 		struct pollfd n;
@@ -112,6 +113,7 @@ void Server::addclient(int &i)
 		fds.push_back(n);
 		clients[fd] = new Client;
 		clients[fd]->set_fd(fd);
+		clients[fd]->sethostname(addr);
 	}
 	i++;
 }

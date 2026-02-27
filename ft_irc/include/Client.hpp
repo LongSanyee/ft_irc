@@ -22,7 +22,8 @@ public:
     void set_fd(int fd);
     void set_hasPass(bool t);
     void set_nickname(std::string nick);
-
+    void sethostname(std::string host);
+    std::string gethost();
 private:
     int fd;
     bool haspass;
@@ -32,6 +33,7 @@ private:
     std::string Data;
     std::string nickname;
     std::string username;
+    std::string hostname;
 };
 
 
