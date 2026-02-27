@@ -67,3 +67,8 @@ std::string Client::gethost()
 {
     return this->hostname;
 }
+
+std::vector<std::string>& Client::getclchannels()
+{
+    return _Channels;
+}

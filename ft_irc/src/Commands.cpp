@@ -5,6 +5,7 @@
 #include "../include/Command.hpp"
 
 
+
 bool valid_nick(std::string nm)
 {
     std::string valid = "[]\\^_`{|}abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -66,13 +67,38 @@ void execute_pass(Command &cmd, Client &cl, Server &ser)
     cl.set_hasPass(true);
 }
 
+void execute_quit(Command &cmd, Client &cl, Server &ser)
+{
+    if (cl.get_isregistred())
+    {
+        std::vector<std::string> &tmp = cl.getclchannels();
+        std::map<std::string, Channel*>::iterator it;
+        for (int i = 0; i < tmp.size(); i++)
+        {
+            it = ser.getmap().find(tmp[i]);
+            if (it != ser.getmap().end())
+            {
+                if (cmd.getparams().empty())
+                    ser.getmap()[tmp[i]]->sendtoall(ser, ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" QUIT :Client Quit");
+                else
+                    ser.getmap()[tmp[i]]->sendtoall(ser, ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" QUIT :"+cmd.getparams()[0]);
+            }
+        }
+        ser.disconnect_client(cl.get_fd());
+    }
+    else
+    {
+        ser.sendmsg(cl.get_fd(), "ERROR: Closing Link (User Quit)\r\n");
+        ser.disconnect_client(cl.get_fd());
+    }
+}
 
 void execute_cmd(Command &cmd, Client &cl, Server &ser)
 {
     if (cmd.getcmd() == "PASS") {execute_pass(cmd,cl,ser);}
     else if (cmd.getcmd() == "NICK") { }
     else if (cmd.getcmd() == "USER") {  }
-    else if (cmd.getcmd() == "QUIT") {  }
+    else if (cmd.getcmd() == "QUIT") {execute_quit(cmd, cl, ser);}
     else if (cmd.getcmd() == "PING") {  }
     else if (cmd.getcmd() == "JOIN") {  }
     else if (cmd.getcmd() == "PRIVMSG") { }

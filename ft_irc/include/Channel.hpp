@@ -13,10 +13,11 @@ public:
     void addclient(std::string nick, Client *ref);
     std::string gettopic();
     std::string getname();
+    void sendtoall(Server &ser, std::string message);
 private:
     std::string name;
     std::string topic;
-    std::map<std::string, Client&> clients;
+    std::map<std::string, Client *> clients;
 };
 
 #endif

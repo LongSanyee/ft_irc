@@ -161,3 +161,8 @@ bool Server::verify_nick(std::string nick)
 	}
 	return true;
 };
+
+std::map<std::string, Channel *>& Server::getmap()
+{
+	return channels;
+}

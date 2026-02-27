@@ -1,6 +1,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include "Channel.hpp"
 #include <vector>
 #include "Command.hpp"
 #include <sys/socket.h>
@@ -33,9 +34,11 @@ public:
     std::string get_passwd();
     void disconnect_client(int fd);
     bool verify_nick(std::string nick);
+    std::map<std::string, Channel *> &getmap();
 private:
     std::vector<struct pollfd> fds;
     std::map<int, Client*> clients;
+    std::map<std::string, Channel *> channels;
     int server_fd;
     int port;
     std::string password;

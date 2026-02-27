@@ -23,5 +23,14 @@ std::string Channel::getname()
 
 void Channel::addclient(std::string nick, Client *ref)
 {
-    clients[nick] = *ref;
+    clients[nick] = ref;
+}
+
+void Channel::sendtoall(Server &ser, std::string message)
+{
+    std::map<std::string, Client *>::iterator it;
+    for (it = this->clients.begin(); it != clients.end(); ++it)
+    {
+        ser.sendmsg(it->second->get_fd(), message);
+    }
 }

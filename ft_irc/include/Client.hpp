@@ -24,6 +24,7 @@ public:
     void set_nickname(std::string nick);
     void sethostname(std::string host);
     std::string gethost();
+    std::vector<std::string>& getclchannels();
 private:
     int fd;
     bool haspass;
@@ -34,6 +35,7 @@ private:
     std::string nickname;
     std::string username;
     std::string hostname;
+    std::vector<std::string> _Channels;
 };
 
 
