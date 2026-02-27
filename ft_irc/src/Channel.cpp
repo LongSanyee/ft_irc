@@ -21,7 +21,7 @@ std::string Channel::getname()
     return name;
 }
 
-void Channel::addclient(std::string nick, Client &ref)
+void Channel::addclient(std::string nick, Client *ref)
 {
-    clients[nick] = ref;
+    clients[nick] = *ref;
 }

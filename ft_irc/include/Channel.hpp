@@ -10,7 +10,7 @@ class Channel
 public:
     void setname(std::string _name);
     void settopic(std::string _topic);
-    void addclient(std::string nick, Client &ref);
+    void addclient(std::string nick, Client *ref);
     std::string gettopic();
     std::string getname();
 private:
