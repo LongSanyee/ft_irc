@@ -69,8 +69,8 @@ void execute_pass(Command &cmd, Client &cl, Server &ser)
 
 void execute_quit(Command &cmd, Client &cl, Server &ser)
 {
-    std::string t = ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" QUIT :Client Quit";
-    std::string s = ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" QUIT :"+cmd.getparams()[0];
+    std::string t = ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" QUIT :Client Quit\r\n";
+    std::string s = ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" QUIT :"+cmd.getparams()[0]+"\r\n";
     if (cl.get_isregistred())
     {
         std::vector<std::string> &tmp = cl.getclchannels();
@@ -97,6 +97,37 @@ void execute_quit(Command &cmd, Client &cl, Server &ser)
     else
         ser.sendmsg(cl.get_fd(), "ERROR: Closing Link (User Quit)\r\n");
     ser.disconnect_client(cl.get_fd());
+}
+
+void execute_privmsg(Command &cmd, Client &cl, Server &ser)
+{
+    if (cmd.getparams().size() < 2)
+    {
+        if (cmd.getparams().size() == 1)
+            ser.sendmsg(cl.get_fd(), ":ircserv 412 :No text to send\r\n");
+        else
+            ser.sendmsg(cl.get_fd(), ":ircserv 411 :No recipient given (PRIVMSG)\r\n");
+        return ;
+    }
+    std::string chann = cmd.getparams()[0];
+    std::string message = ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" PRIVMSG "+chann+" :"+cmd.getparams()[1];
+    std::map<std::string, Channel *>::iterator it = ser.getmap().find(chann);
+    Channel *tmp = it->second;
+    if (tmp->getclients().find(cl.get_nickname()) == tmp->getclients().end())
+    {
+        ser.sendmsg(cl.get_fd(), ":ircserv 404 "+cl.get_nickname()+" "+chann+" :Cannot send to channel\r\n");
+        return ;
+    }
+    if (it != ser.getmap().end())
+    {
+        Channel *tmp = it->second;
+        std::map<std::string, Client *>::iterator iter = tmp->getclients().begin();
+        for (;iter != tmp->getclients().end(); ++iter)
+        {
+            if (iter->second->get_fd() != cl.get_fd())
+                ser.sendmsg(iter->second->get_fd(), message+"\r\n");
+        }
+    }
 }
 
 void execute_cmd(Command &cmd, Client &cl, Server &ser)
