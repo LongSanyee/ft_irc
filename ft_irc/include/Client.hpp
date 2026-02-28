@@ -15,7 +15,7 @@ public:
     std::string& getdata();
     bool get_hasPass();
     bool get_hasNick();
-    bool get_hasInfo();
+    bool get_hasuser();
     bool get_isregistred();
     int  get_fd();
     std::string get_nickname();
@@ -30,7 +30,7 @@ private:
     int fd;
     bool haspass;
     bool hasnick;
-    bool hasinfo;
+    bool hasuser;
     bool isregistered;
     std::string Data;
     std::string nickname;

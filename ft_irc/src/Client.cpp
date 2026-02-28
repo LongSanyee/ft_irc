@@ -19,9 +19,9 @@ bool Client::get_hasNick()
 {
     return hasnick;
 };
-bool Client::get_hasInfo()
+bool Client::get_hasuser()
 {
-    return hasinfo;
+    return hasuser;
 };
 bool Client::get_isregistred()
 {

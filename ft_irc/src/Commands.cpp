@@ -21,6 +21,11 @@ bool valid_nick(std::string nm)
 
 void execute_nick(Command &cmd, Client &cl, Server &ser)
 {
+    if (!cl.get_hasPass())
+    {
+        ser.sendmsg(cl.get_fd(), ":server 451 * :You have not registered");
+        return;
+    }
     if(!ser.verify_nick(cmd.getparams()[0]))
     {
         ser.sendmsg(cl.get_fd(), ":server 433 * <nick> :Nickname is already in use");
@@ -36,7 +41,7 @@ void execute_nick(Command &cmd, Client &cl, Server &ser)
         ser.sendmsg(cl.get_fd(), ":server 432 * <nick> :Erroneous nickname");
         return;
     }
-    if (!cl.get_hasNick())
+    if (!cl.get_hasNick() || (cl.get_hasNick() && cl.get_hasuser()))
     {
         cl.set_nickname(cmd.getparams()[0]);
     }
@@ -133,12 +138,12 @@ void execute_privmsg(Command &cmd, Client &cl, Server &ser)
 void execute_cmd(Command &cmd, Client &cl, Server &ser)
 {
     if (cmd.getcmd() == "PASS") {execute_pass(cmd,cl,ser);}
-    else if (cmd.getcmd() == "NICK") { }
+    else if (cmd.getcmd() == "NICK") { execute_nick(cmd,cl,ser);}
     else if (cmd.getcmd() == "USER") {  }
     else if (cmd.getcmd() == "QUIT") {execute_quit(cmd, cl, ser);}
     else if (cmd.getcmd() == "PING") {  }
     else if (cmd.getcmd() == "JOIN") {  }
-    else if (cmd.getcmd() == "PRIVMSG") { }
+    else if (cmd.getcmd() == "PRIVMSG") { execute_privmsg(cmd,cl,ser);}
     else { }
 
 }
