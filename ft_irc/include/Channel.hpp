@@ -22,6 +22,11 @@ public:
     std::map<std::string, Client *>& getclients();
 private:
     std::string name;
+    bool i;
+    bool t;
+    bool k;
+    bool o;
+    bool l;
     std::string topic;
     std::map<std::string, Client *> clients;
 };

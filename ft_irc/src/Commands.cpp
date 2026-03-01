@@ -134,6 +134,13 @@ void execute_privmsg(Command &cmd, Client &cl, Server &ser)
         }
     }
 }
+void execute_ping(Command &cmd, Client &cl, Server &ser)
+{
+    if (cmd.getparams().empty())
+        return; 
+    std::string pong = ":ircserv PONG ircserv :" + cmd.getparams()[0] + "\r\n";
+    ser.sendmsg(cl.get_fd(), pong);
+}
 
 void execute_cmd(Command &cmd, Client &cl, Server &ser)
 {
@@ -141,7 +148,7 @@ void execute_cmd(Command &cmd, Client &cl, Server &ser)
     else if (cmd.getcmd() == "NICK") { execute_nick(cmd,cl,ser);}
     else if (cmd.getcmd() == "USER") {  }
     else if (cmd.getcmd() == "QUIT") {execute_quit(cmd, cl, ser);}
-    else if (cmd.getcmd() == "PING") {  }
+    else if (cmd.getcmd() == "PING") {execute_ping(cmd, cl, ser);}
     else if (cmd.getcmd() == "JOIN") {  }
     else if (cmd.getcmd() == "PRIVMSG") { execute_privmsg(cmd,cl,ser);}
     else { }

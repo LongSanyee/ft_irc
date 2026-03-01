@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sstream> 
 #include <vector>
+#include <map>
 #include "Server.hpp"
 
 
@@ -36,7 +37,7 @@ private:
     std::string nickname;
     std::string username;
     std::string hostname;
-    std::vector<std::string> _Channels;
+    std::map<std::string, int> _Channels;
 };
 
 
