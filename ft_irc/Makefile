@@ -4,7 +4,7 @@ SRC = src/main.cpp src/parse.cpp src/Server.cpp src/Client.cpp src/Command.cpp
 
 OBJ = $(SRC:.cpp=.o)
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -std=c++98
 
 C++ = c++
 

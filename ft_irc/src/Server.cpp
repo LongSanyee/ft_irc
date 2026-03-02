@@ -1,5 +1,12 @@
 #include "../include/Server.hpp"
 
+bool Server::stop = false;
+
+void Server::signalhandler(int sig)
+{
+	(void)sig;
+	Server::stop = true;
+}
 
 Server::Server(char *pass, char *port)
 {
@@ -10,12 +17,25 @@ Server::Server(char *pass, char *port)
 
 Server::~Server()
 {
-
+	std::map<int, Client *>::iterator it = clients.begin();
+	while (it != clients.end())
+	{
+		close(it->first);
+		delete it->second;
+		it++;
+	}
+	close(server_fd);
+	clients.clear();
+	fds.clear();
 }
 
 void Server::sendmsg(int fd, std::string message)
 {
-
+	ssize_t bytes = send(fd, message.data(), message.size(), MSG_NOSIGNAL);
+	if (bytes == -1)
+	{
+		
+	}
 }
 
 void Server::setsocket()
@@ -60,6 +80,7 @@ void Server::receivedata(int &i)
 				std::string extracted = str.substr(0, pos + tmp.size());
 				str.erase(0, pos + tmp.size());
 				Command cmd(extracted);
+
 			}
 		}
 		i++;
@@ -86,7 +107,7 @@ void Server::addclient(int &i)
 		n.events = POLLIN;
 		n.revents = 0;
 		fds.push_back(n);
-		clients[fd] = new Client;
+		clients[fd] = new Client(fd);
 	}
 	i++;
 }
@@ -110,8 +131,13 @@ void Server::addclient()
 
 void Server::eventloop()
 {
+	struct sigaction sa;
+	sa.sa_handler = signalhandler;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	sigaction(SIGINT, &sa, NULL);
     setsocket();
-    while (1)
+    while (!stop)
     {
         if (poll(fds.data(), fds.size(), -1) > 0)
         {

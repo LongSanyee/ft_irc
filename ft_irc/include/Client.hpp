@@ -10,16 +10,16 @@
 class Client
 {
 public:
-    void setdata(std::string str);
-    std::string& getdata();
+    Client(int _fd);
 private:
+    int fd;
     bool haspass;
     bool hasnick;
     bool hasinfo;
     bool isregistered;
-    std::string Data;
     std::string nickname;
     std::string username;
+    std::vector<std::string> invited;
 };
 
 

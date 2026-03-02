@@ -1,13 +1,7 @@
 #include "../include/Client.hpp"
 
 
-void Client::setdata(std::string str)
+Client::Client(int _fd)
 {
-    Data += str;
+    fd = _fd;
 }
-
-std::string& Client::getdata()
-{
-    return this->Data;
-}
-
