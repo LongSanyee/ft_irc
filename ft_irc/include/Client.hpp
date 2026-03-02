@@ -26,7 +26,7 @@ public:
     void set_nickname(std::string nick);
     void sethostname(std::string host);
     std::string gethost();
-    std::vector<std::string>& getclchannels();
+    std::map<std::string, int>& getclchannels();
 private:
     int fd;
     bool haspass;

@@ -6,6 +6,10 @@
 #include "Server.hpp"
 #include "irc.hpp"
 
+#define INVITE 1
+#define OPERATOR 2
+#define REGULAR 0
+
 class Server;
 class Client;
 class Command;
@@ -20,6 +24,11 @@ public:
     std::string getname();
     void sendtoall(Server &ser, std::string message);
     std::map<std::string, Client *>& getclients();
+    bool get_i();
+    bool get_k();
+    bool get_l();
+    std::string get_key();
+    int get_limit();
 private:
     std::string name;
     bool i;
@@ -28,6 +37,8 @@ private:
     bool o;
     bool l;
     std::string topic;
+    std::string key;
+    int limit;
     std::map<std::string, Client *> clients;
 };
 

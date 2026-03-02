@@ -39,3 +39,23 @@ std::map<std::string, Client *>& Channel::getclients()
 {
     return clients;
 }
+bool Channel::get_i()
+{
+    return this->i;
+};
+bool Channel::get_k()
+{
+    return this->k;
+};
+bool Channel::get_l()
+{
+    return this->l;
+};
+std::string Channel::get_key()
+{
+    return this->key;
+};
+int Channel::get_limit()
+{
+    return this->limit;
+};
