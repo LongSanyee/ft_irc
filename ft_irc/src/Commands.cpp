@@ -89,6 +89,25 @@ void execute_join(Command &cmd, Client &cl, Server &ser)
         ser.sendmsg(cl.get_fd(), ":ircserv 403 " + cl.get_nickname() + " " + cmd.getparams()[0] + " :No such channel\r\n");
         return;
     }
+    if (cmd.getparams()[0] == "0")
+    {
+        std::map<std::string,int>::iterator it = cl.getclchannels().begin();
+        while (it != cl.getclchannels().end())
+        {
+            std::string chname = it->first;
+            it++;
+            Channel *ch = ser.getmap()[chname];
+            ch->sendtoall(ser, ":" + cl.get_nickname() + "!" + cl.get_username() + "@" + cl.gethost() + " PART " + chname + "\r\n");
+            ch->getclients().erase(cl.get_nickname());
+            if (ch->getclients().empty())
+            {
+                delete ch;
+                ser.getmap().erase(chname);
+            }
+        }
+        cl.getclchannels().clear();
+        return;
+    }
     std::map<std::string, Channel *>::iterator it = ser.getmap().find(cmd.getparams()[0]);
     Channel *ch;
     if (it != ser.getmap().end())
