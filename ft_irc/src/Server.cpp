@@ -1,7 +1,11 @@
 #include "../include/Server.hpp"
 
+std::map<int, Client *> &Server::getclients()
+{
+	return clients;
+}
 
-Server::Server(char *pass, char *port)
+Server::Server(char *port, char *pass)
 {
 	password = pass;
 	std::stringstream t(port);
@@ -154,9 +158,10 @@ std::string Server::get_passwd()
 
 bool Server::verify_nick(std::string nick)
 {
-	for (int i = 0; i < this->clients.size(); i++)
+	std::map<int, Client *>::iterator it = clients.begin();
+	for (;it != clients.end(); ++it)
 	{
-		if (this->clients[i]->get_nickname() == nick)
+		if (it->second->get_nickname() == nick)
 			return false;
 	}
 	return true;

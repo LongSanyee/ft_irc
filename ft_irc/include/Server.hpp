@@ -23,7 +23,7 @@ class Channel;
 class Server
 {
 public:
-    Server(char *pass, char *port);
+    Server(char *port, char *pass);
     ~Server();
     void setsocket();
     void eventloop();
@@ -37,6 +37,7 @@ public:
     bool verify_nick(std::string nick);
     Client*  getclientbynick(const std::string &nickname);
     std::map<std::string, Channel *> &getmap();
+    std::map<int, Client *> &getclients();
 private:
     std::vector<struct pollfd> fds;
     std::map<int, Client*> clients;

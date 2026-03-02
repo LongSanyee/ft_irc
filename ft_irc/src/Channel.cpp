@@ -1,5 +1,14 @@
 #include "../include/Channel.hpp"
 
+Channel::Channel()
+{
+    i = 0;
+    t = 0;
+    k = 0;
+    o = 0;
+    l = 0;
+    limit = 0;
+}
 
 void Channel::setname(std::string _name)
 {

@@ -49,9 +49,9 @@ void execute_nick(Command &cmd, Client &cl, Server &ser)
     }
     cl.set_hasnick(true);
     cl.set_nickname(cmd.getparams()[0]);
+    cl.set_isregistered(true);
     if (cl.get_hasuser())
     {
-        cl.set_isregistered(true);
         std::string tmp = cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost();
         ser.sendmsg(cl.get_fd(), ":ircserv 001 "+cl.get_nickname()+" :Welcome to the Internet Relay Chat Network "+tmp);
     }
@@ -59,6 +59,7 @@ void execute_nick(Command &cmd, Client &cl, Server &ser)
 
 void execute_pass(Command &cmd, Client &cl, Server &ser)
 {
+    std::cout << "IM HERE/n" << std::endl;
     if (cl.get_isregistred())
     {
         ser.sendmsg(cl.get_fd(), ":ircserv 462 * :You may not reregister\r\n");
@@ -247,25 +248,43 @@ void execute_privmsg(Command &cmd, Client &cl, Server &ser)
         return ;
     }
     std::string chann = cmd.getparams()[0];
-    std::string message = ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" PRIVMSG "+chann+" :"+cmd.getparams()[1];
-    std::map<std::string, Channel *>::iterator it = ser.getmap().find(chann);
-    Channel *tmp = it->second;
-    if (tmp->getclients().find(cl.get_nickname()) == tmp->getclients().end())
+    if (chann[0] == '#')
     {
-        ser.sendmsg(cl.get_fd(), ":ircserv 404 "+cl.get_nickname()+" "+chann+" :Cannot send to channel\r\n");
-        return ;
-    }
-    if (it != ser.getmap().end())
-    {
-        Channel *tmp = it->second;
-        std::map<std::string, Client *>::iterator iter = tmp->getclients().begin();
-        for (;iter != tmp->getclients().end(); ++iter)
+        std::string message = ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" PRIVMSG "+chann+" :"+cmd.getparams()[1];
+        std::map<std::string, Channel *>::iterator it = ser.getmap().find(chann);
+        if (it != ser.getmap().end())
         {
-            if (iter->second->get_fd() != cl.get_fd())
-                ser.sendmsg(iter->second->get_fd(), message+"\r\n");
+            Channel *tmp = it->second;
+            if (tmp->getclients().find(cl.get_nickname()) == tmp->getclients().end())
+            {
+                ser.sendmsg(cl.get_fd(), ":ircserv 404 "+cl.get_nickname()+" "+chann+" :No such nick/channel\r\n");
+                return ;
+            }
+            std::map<std::string, Client *>::iterator iter = tmp->getclients().begin();
+            for (;iter != tmp->getclients().end(); ++iter)
+            {
+                if (iter->second->get_fd() != cl.get_fd())
+                    ser.sendmsg(iter->second->get_fd(), message+"\r\n");
+            }
         }
     }
+    else
+    {
+        std::string message = ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" PRIVMSG "+chann+" :"+cmd.getparams()[1];
+        std::map<int, Client *> &tmp = ser.getclients();
+        std::map<int, Client *>::iterator it = tmp.begin();
+        for (;it != tmp.end(); ++it)
+        {
+            if (chann == it->second->get_nickname())
+            {
+                ser.sendmsg(it->second->get_fd(), message+"\r\n");
+                return;
+            }
+        }
+        ser.sendmsg(cl.get_fd(), ":ircserv 404 "+cl.get_nickname()+" "+chann+" :No such nick/channel\r\n");
+    }
 }
+
 void execute_ping(Command &cmd, Client &cl, Server &ser)
 {
     if (cmd.getparams().empty())

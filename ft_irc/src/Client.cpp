@@ -14,6 +14,14 @@ void Client::set_isregistered(bool i)
 {
     this->isregistered = i;
 }
+Client::Client()
+{
+    haspass = false;
+    hasnick = false;
+    hasuser = false;
+    isregistered = false;
+    
+}
 
 void Client::setdata(std::string str)
 {

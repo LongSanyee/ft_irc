@@ -17,6 +17,7 @@ class Command;
 class Channel
 {
 public:
+    Channel();
     void setname(std::string _name);
     void settopic(std::string _topic);
     void addclient(std::string nick, Client *ref);
@@ -37,15 +38,15 @@ public:
     void set_l(bool val);
     void set_limit(int lim);
 private:
-    std::string name;
     bool i;
     bool t;
     bool k;
     bool o;
     bool l;
+    int limit;
+    std::string name;
     std::string topic;
     std::string key;
-    int limit;
     std::map<std::string, Client *> clients;
 };
 
