@@ -13,7 +13,6 @@ class Client
 {
 public:
     Client();
-    void setdata(std::string str);
     std::string& getdata();
     bool get_hasPass();
     bool get_hasNick();

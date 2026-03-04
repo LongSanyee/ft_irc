@@ -80,21 +80,20 @@ void Server::receivedata(int &i)
 	int n = recv(fds[i].fd, buff, 1024, 0);
 	if (n > 0)
 	{
-		std::string str(buff, n);
-		std::string tmp = "\r\n";
-		size_t pos = 0;
-		while (pos != std::string::npos)
-		{
-			pos = str.find(tmp);
-			if (pos != std::string::npos)
-			{
-				std::string extracted = str.substr(0, pos + tmp.size());
-				str.erase(0, pos + tmp.size());
-				Command cmd(extracted);
-				execute_cmd(cmd, *clients[fds[i].fd], *this);
-			}
-		}
-		i++;
+        clients[fds[i].fd]->getdata().append(buff, n);
+        std::string &data = clients[fds[i].fd]->getdata();
+        std::string delim = "\r\n";
+        size_t pos;
+        while ((pos = data.find(delim)) != std::string::npos)
+        {
+            std::string line = data.substr(0, pos);
+            data.erase(0, pos + delim.size());
+            if (line.empty())
+                continue;
+            Command cmd(line);
+            execute_cmd(cmd, *clients[fds[i].fd], *this);
+        }
+        i++;
 	}
 	else if (n == 0)
 	{

@@ -24,22 +24,22 @@ void execute_nick(Command &cmd, Client &cl, Server &ser)
 {
     if (!cl.get_hasPass())
     {
-        ser.sendmsg(cl.get_fd(), ":server 451 * :You have not registered");
+        ser.sendmsg(cl.get_fd(), ":ircserv 451 * :You have not registered\r\n");
         return;
     }
     if(!ser.verify_nick(cmd.getparams()[0]))
     {
-        ser.sendmsg(cl.get_fd(), ":server 433 * <nick> :Nickname is already in use");
+        ser.sendmsg(cl.get_fd(), ":ircserv 433 * <nick> :Nickname is already in use\r\n");
         return;
     }
     if (cmd.getparams()[0].empty())
     {
-        ser.sendmsg(cl.get_fd(), ":server 431 * :No nickname given");
+        ser.sendmsg(cl.get_fd(), ":ircserv 431 * :No nickname given\r\n");
         return;
     }
     if (!valid_nick(cmd.getparams()[0]))
     {
-        ser.sendmsg(cl.get_fd(), ":server 432 * <nick> :Erroneous nickname");
+        ser.sendmsg(cl.get_fd(), ":ircserv 432 * <nick> :Erroneous nickname\r\n");
         return;
     }
     if (cl.get_isregistred())
@@ -52,7 +52,7 @@ void execute_nick(Command &cmd, Client &cl, Server &ser)
     if (cl.get_hasuser())
     {
         cl.set_isregistered(true);
-        std::string tmp = cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost();
+        std::string tmp = cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+"\r\n";
         ser.sendmsg(cl.get_fd(), ":ircserv 001 "+cl.get_nickname()+" :Welcome to the Internet Relay Chat Network "+tmp);
     }
 }
@@ -90,6 +90,7 @@ void join_one(std::string first, std::string second, Client &cl, Server &ser)
     Channel *ch;
     if (it != ser.getmap().end())
     {
+        std::cout << "IM HERE IN JOIN\n";
         ch = it->second;
         if (ch->getclients().find(cl.get_nickname()) != ch->getclients().end())
             return;
@@ -101,6 +102,7 @@ void join_one(std::string first, std::string second, Client &cl, Server &ser)
         }
         if (ch->get_k())
         {
+            std::cout << "IM HERE IN JOIN\n";
             if (second.empty() || second != ch->get_key())
             {
                 ser.sendmsg(cl.get_fd(), ":ircserv 475 " + cl.get_nickname() + " " + first + " :Cannot join channel (+k)\r\n");
@@ -277,7 +279,7 @@ void execute_privmsg(Command &cmd, Client &cl, Server &ser)
         {
             if (chann == it->second->get_nickname())
             {
-                ser.sendmsg(it->second->get_fd(), message);
+                ser.sendmsg(it->second->get_fd(), message+"\r\n");
                 return;
             }
         }
@@ -509,6 +511,7 @@ void execute_mode(Command &cmd, Client &cl, Server &ser)
         {
             if (adding)
             {
+                std::cout << "ana hna f adding\n";
                 if (arg_index >= (int)cmd.getparams().size())
                 {
                     ser.sendmsg(cl.get_fd(), ":ircserv 461 " + cl.get_nickname() + " MODE :Not enough parameters\r\n");
@@ -619,7 +622,7 @@ void execute_user(Command &cmd, Client &cl, Server &ser)
     }
     if (cmd.getparams().size() < 4)
     {
-        ser.sendmsg(cl.get_fd(), ":servername 461 "+cl.get_nickname()+" :Not enough parameters\r\n");
+        ser.sendmsg(cl.get_fd(), "name 461 "+cl.get_nickname()+" :Not enough parameters\r\n");
         return ;
     }
     cl.set_username(cmd.getparams()[0]);
