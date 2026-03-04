@@ -49,9 +49,9 @@ void execute_nick(Command &cmd, Client &cl, Server &ser)
     }
     cl.set_hasnick(true);
     cl.set_nickname(cmd.getparams()[0]);
-    cl.set_isregistered(true);
     if (cl.get_hasuser())
     {
+        cl.set_isregistered(true);
         std::string tmp = cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost();
         ser.sendmsg(cl.get_fd(), ":ircserv 001 "+cl.get_nickname()+" :Welcome to the Internet Relay Chat Network "+tmp);
     }
@@ -277,7 +277,7 @@ void execute_privmsg(Command &cmd, Client &cl, Server &ser)
         {
             if (chann == it->second->get_nickname())
             {
-                ser.sendmsg(it->second->get_fd(), message+"\r\n");
+                ser.sendmsg(it->second->get_fd(), message);
                 return;
             }
         }
@@ -628,7 +628,7 @@ void execute_user(Command &cmd, Client &cl, Server &ser)
     {
         cl.set_isregistered(true);
         std::string tmp = cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost();
-        ser.sendmsg(cl.get_fd(), ":ircserv 001 "+cl.get_nickname()+" :Welcome to the Internet Relay Chat Network "+tmp);
+        ser.sendmsg(cl.get_fd(), ":ircserv 001 "+cl.get_nickname()+" :Welcome to the Internet Relay Chat Network "+tmp+"\r\n");
     }
 }
 
@@ -636,7 +636,7 @@ void execute_cmd(Command &cmd, Client &cl, Server &ser)
 {
     if (cmd.getcmd() == "PASS") {execute_pass(cmd,cl,ser);}
     else if (cmd.getcmd() == "NICK") {execute_nick(cmd,cl,ser);}
-    else if (cmd.getcmd() == "USER") {  }
+    else if (cmd.getcmd() == "USER") {execute_user(cmd,cl,ser);}
     else if (cmd.getcmd() == "QUIT") {execute_quit(cmd, cl, ser);}
     else if (cmd.getcmd() == "PING") {execute_ping(cmd, cl, ser);}
     else if (cmd.getcmd() == "JOIN") {execute_join(cmd, cl, ser); }
@@ -644,7 +644,7 @@ void execute_cmd(Command &cmd, Client &cl, Server &ser)
     else if (cmd.getcmd() == "KICK" ) {execute_kick(cmd, cl, ser);}
     else if (cmd.getcmd() == "INVITE" ){execute_invite(cmd, cl, ser);}
     else if (cmd.getcmd() == "TOPIC" ){}
-    else if (cmd.getcmd() == "MODE") {}
+    else if (cmd.getcmd() == "MODE") {execute_mode(cmd, cl, ser);}
 
 }
 
