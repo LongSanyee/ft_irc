@@ -59,7 +59,38 @@ int Channel::get_limit()
 {
     return this->limit;
 };
+
 bool Channel::get_t()
 {
-    
+    return t;
 };
+
+void Channel::set_i(bool val)
+{
+    this->i = val;
+}
+
+void Channel::set_t(bool val)
+{
+    this->t = val;
+}
+
+void Channel::set_k(bool val)
+{
+    this->k = val;
+}
+
+void Channel::set_key(std::string key)
+{
+    this->key = key;
+}
+
+void Channel::set_l(bool val)
+{
+    l = val;
+}
+
+void Channel::set_limit(int lim)
+{
+    this->limit = lim;
+}

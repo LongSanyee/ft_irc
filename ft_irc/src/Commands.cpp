@@ -4,7 +4,7 @@
 #include "../include/irc.hpp"
 #include "../include/Command.hpp"
 #include <sstream>
-
+    
 
 
 bool valid_nick(std::string nm)
@@ -42,13 +42,18 @@ void execute_nick(Command &cmd, Client &cl, Server &ser)
         ser.sendmsg(cl.get_fd(), ":server 432 * <nick> :Erroneous nickname");
         return;
     }
-    if (!cl.get_hasNick() || (cl.get_hasNick() && cl.get_hasuser()))
+    if (cl.get_isregistred())
     {
         cl.set_nickname(cmd.getparams()[0]);
+        return ;
     }
-    else
+    cl.set_hasnick(true);
+    cl.set_nickname(cmd.getparams()[0]);
+    if (cl.get_hasuser())
     {
-        ser.broadcastmsg(":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost() + "NICK : "+cmd.getparams()[0]);
+        cl.set_isregistered(true);
+        std::string tmp = cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost();
+        ser.sendmsg(cl.get_fd(), ":ircserv 001 "+cl.get_nickname()+" :Welcome to the Internet Relay Chat Network "+tmp);
     }
 }
 
@@ -201,21 +206,22 @@ void execute_join(Command &cmd, Client &cl, Server &ser)
 void execute_quit(Command &cmd, Client &cl, Server &ser)
 {
     std::string t = ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" QUIT :Client Quit\r\n";
-    std::string s = ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" QUIT :"+cmd.getparams()[0]+"\r\n";
+    std::string s = ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" QUIT :";
     if (cl.get_isregistred())
     {
-        std::vector<std::string> &tmp = cl.getclchannels();
+        std::map<std::string, int> &tmp = cl.getclchannels();
+        std::map<std::string, int>::iterator iter = tmp.begin();
         std::map<std::string, Channel*>::iterator it;
-        for (int i = 0; i < tmp.size(); i++)
+        for (; iter != tmp.end(); ++iter)
         {
-            it = ser.getmap().find(tmp[i]);
+            it = ser.getmap().find(iter->first);
             if (it != ser.getmap().end())
             {
                 Channel *ch = it->second;
                 if (cmd.getparams().empty())
                     ch->sendtoall(ser, t);
                 else
-                    ch->sendtoall(ser, s);
+                    ch->sendtoall(ser, s+cmd.getparams()[0]+"\r\n");
                 ch->getclients().erase(cl.get_nickname());
                 if (ch->getclients().empty())
                 {
@@ -578,6 +584,33 @@ void execute_mode(Command &cmd, Client &cl, Server &ser)
         }
     }
 
+}
+
+void execute_user(Command &cmd, Client &cl, Server &ser)
+{
+    if (!cl.get_hasPass())
+    {
+        ser.sendmsg(cl.get_fd(), ":ircserv 451 * :You have not registered\r\n");
+        return;
+    }
+    if (cl.get_isregistred())
+    {
+        ser.sendmsg(cl.get_fd(), ":ircserv 462 "+cl.get_nickname()+":You may not register\r\n");
+        return;
+    }
+    if (cmd.getparams().size() < 4)
+    {
+        ser.sendmsg(cl.get_fd(), ":servername 461 "+cl.get_nickname()+" :Not enough parameters\r\n");
+        return ;
+    }
+    cl.set_username(cmd.getparams()[0]);
+    cl.set_hasuser(true);
+    if (cl.get_hasNick())
+    {
+        cl.set_isregistered(true);
+        std::string tmp = cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost();
+        ser.sendmsg(cl.get_fd(), ":ircserv 001 "+cl.get_nickname()+" :Welcome to the Internet Relay Chat Network "+tmp);
+    }
 }
 
 void execute_cmd(Command &cmd, Client &cl, Server &ser)

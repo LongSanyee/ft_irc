@@ -23,7 +23,11 @@ public:
     std::string get_username();
     void set_fd(int fd);
     void set_hasPass(bool t);
+    void set_hasnick(bool n);
+    void set_hasuser(bool u);
+    void set_isregistered(bool i);
     void set_nickname(std::string nick);
+    void set_username(std::string user);
     void sethostname(std::string host);
     std::string gethost();
     std::map<std::string, int>& getclchannels();

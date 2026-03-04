@@ -1,5 +1,19 @@
 #include "../include/Client.hpp"
 
+void Client::set_hasnick(bool n)
+{
+    this->hasnick = n;
+}
+
+void Client::set_hasuser(bool u)
+{
+    this->hasuser = u;
+}
+
+void Client::set_isregistered(bool i)
+{
+    this->isregistered = i;
+}
 
 void Client::setdata(std::string str)
 {
@@ -71,4 +85,9 @@ std::string Client::gethost()
 std::map<std::string, int>& Client::getclchannels()
 {
     return _Channels;
+}
+
+void Client::set_username(std::string user)
+{
+    this->username = user;
 }
