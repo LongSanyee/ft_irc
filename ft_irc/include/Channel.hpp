@@ -27,8 +27,15 @@ public:
     bool get_i();
     bool get_k();
     bool get_l();
+    bool get_t();
     std::string get_key();
     int get_limit();
+    void set_i(bool val);
+    void set_t(bool val);
+    void set_k(bool val);
+    void set_key(std::string key);
+    void set_l(bool val);
+    void set_limit(int lim);
 private:
     std::string name;
     bool i;

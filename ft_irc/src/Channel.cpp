@@ -59,3 +59,7 @@ int Channel::get_limit()
 {
     return this->limit;
 };
+bool Channel::get_t()
+{
+    
+};

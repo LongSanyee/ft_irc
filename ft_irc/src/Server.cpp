@@ -166,3 +166,14 @@ std::map<std::string, Channel *>& Server::getmap()
 {
 	return channels;
 }
+
+Client* Server::getclientbynick(const std::string &nickname)
+{
+    std::map<int, Client *>::iterator it = clients.begin();
+    for (; it != clients.end(); ++it)
+    {
+        if (it->second->get_nickname() == nickname)
+            return it->second;
+    }
+    return NULL;
+}

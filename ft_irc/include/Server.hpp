@@ -35,6 +35,7 @@ public:
     std::string get_passwd();
     void disconnect_client(int fd);
     bool verify_nick(std::string nick);
+    Client*  getclientbynick(const std::string &nickname);
     std::map<std::string, Channel *> &getmap();
 private:
     std::vector<struct pollfd> fds;
