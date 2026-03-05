@@ -12,7 +12,7 @@ bool valid_nick(std::string nm)
     std::string valid = "[]\\^_`{|}abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     if (nm.empty() || nm.length() > 9 || valid.find(nm[0]) == std::string::npos)
         return false;
-    for (int i =0;i < nm.length();i++)
+    for (size_t i =0;i < nm.length();i++)
     {
         if (!isdigit(nm[i]) && valid.find(nm[i]) == std::string::npos && nm[i] != '-')
             return false;

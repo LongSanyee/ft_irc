@@ -2,7 +2,7 @@
 
 int invalid(std::string t)
 {
-    int i = 0;
+    size_t i = 0;
     for (;i < t.size(); i++)
     {
         if (isspace(t[i]) || !isprint(t[i]))

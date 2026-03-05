@@ -24,9 +24,10 @@ void Server::sendmsg(int fd, std::string message)
 
 void Server::broadcastmsg(std::string message)
 {
-	for (struct pollfd socket : fds)
+	std::vector<pollfd>::iterator it = fds.begin();
+	for (;it != fds.end(); it++)
 	{
-		sendmsg(socket.fd, message);
+		sendmsg(it->fd, message);
 	}
 }
 
@@ -53,7 +54,11 @@ void Server::setsocket()
 		perror("listen error");
 		exit(1);
 	}
-	fds.push_back({server_fd, POLLIN, 0});
+	struct pollfd tmp;
+	tmp.fd = server_fd;
+	tmp.events = POLLIN;
+	tmp.revents = 0;
+	fds.push_back(tmp);
 }
 
 void Server::disconnect_client(int fd)
@@ -126,7 +131,7 @@ void Server::addclient(int &i)
 void Server::addclient()
 {
     int i = 0;
-    while (i < fds.size())
+    while (i < (int)fds.size())
     {
         if (fds[i].revents == POLLIN)
         {
