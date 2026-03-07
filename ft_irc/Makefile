@@ -11,10 +11,10 @@ C++ = c++
 all: $(NAME)
 
 $(NAME): $(OBJ)
-		$(C++) $(CFLAGS) $(OBJ) -o $@
+		c++ $(CFLAGS) $(OBJ) -o $@
 
 %.o: %.c include/Client.hpp include/Server.hpp include/irc.hpp
-		$(C++) $(CFLAGS) -c $< -o $@
+		c++ $(CFLAGS) -c $< -o $@
 
 clean:
 		rm -rf $(OBJ)
