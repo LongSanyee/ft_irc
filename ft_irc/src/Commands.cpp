@@ -683,7 +683,29 @@ void execute_topic(Command &cmd, Client &cl, Server &ser)
         std::map<std::string, Client *>::iterator iter = it->second->getclients().find(clientnick);
         if (iter != it->second->getclients().end())
         {
-            if (it->second->get_t())
+            std::map<std::string, int>::iterator t = cl.getclchannels().find(channelname);
+            if (t == cl.getclchannels().end())
+            {
+                ser.sendmsg(cl.get_fd(), ":ircserv 442 " + clientnick + " " + channelname + " :You're not on that channel\r\n");
+                return;
+            }
+            if (it->second->get_t() && t->second == 2)
+            {
+                it->second->settopic(channeltopic);
+                it->second->sendtoall(ser, ":"+clientnick+"!"+cl.get_username()+"@"+cl.gethost()+" TOPIC "+channelname+" :"+channeltopic+"\r\n");
+                return ;
+            }
+            else if (it->second->get_t() && t->second != 2)
+            {
+                ser.sendmsg(cl.get_fd(), ":ircserv 482 "+clientnick+" "+channelname+" :You're not a channel operator\r\n");
+                return ;
+            }
+            else
+            {
+                it->second->settopic(channeltopic);
+                it->second->sendtoall(ser, ":"+clientnick+"!"+cl.get_username()+"@"+cl.gethost()+" TOPIC "+channelname+" :"+channeltopic+"\r\n");
+                return ;
+            }
         }
     }
 }
@@ -703,6 +725,4 @@ void execute_cmd(Command &cmd, Client &cl, Server &ser)
     else if (cmd.getcmd() == "MODE") {execute_mode(cmd, cl, ser);}
 
 }
-
-
 
