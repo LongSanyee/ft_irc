@@ -12,7 +12,7 @@ OBJ = $(SRC:.cpp=.o)
 
 BONUS_OBJ = $(BONUS_SRC:.cpp=.o)
 
-CFLAGS = -Wall -Wextra -Werror -std=c++98
+CFLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address -g3
 
 C++ = c++
 

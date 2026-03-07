@@ -30,13 +30,14 @@ Server::~Server()
 		delete it->second;
 		it++;
 	}
-	// std::map<std::string, Channel *>::iterator iter = channels.begin();
-	// for (;iter != channels.end(); iter++)
-	// {
-	// 	iter-
-	// }
+	std::map<std::string, Channel *>::iterator iter = channels.begin();
+	for (;iter != channels.end(); iter++)
+	{
+		delete iter->second;
+	}
 	close(server_fd);
 	clients.clear();
+	channels.clear();
 	fds.clear();
 }
 
@@ -97,9 +98,27 @@ void Server::disconnect_client(int fd)
     }
     if (clients.count(fd))
     {
+		std::map<std::string, int>::iterator it = clients[fd]->getclchannels().begin();
+		for (;it != clients[fd]->getclchannels().end(); it++)
+		{
+			std::map<std::string, Channel *>::iterator iter = channels.find(it->first);
+			if (iter != channels.end())
+			{
+				std::map<std::string, Client *>::iterator t = iter->second->getclients().find(clients[fd]->get_nickname());
+				if (t != iter->second->getclients().end())
+				{
+					iter->second->getclients().erase(t);
+					if (iter->second->getclients().empty())
+					{
+						delete iter->second;
+						channels.erase(iter);
+					}
+				}
+			}
+		}
         delete clients[fd];
         clients.erase(fd);
-    }
+	}
     close(fd);
 }
 
@@ -113,6 +132,7 @@ void Server::receivedata(int &i)
         std::string &data = clients[fds[i].fd]->getdata();
         std::string delim = "\r\n";
         size_t pos;
+		int tmpfd = fds[i].fd;
         while ((pos = data.find(delim)) != std::string::npos)
         {
             std::string line = data.substr(0, pos);
@@ -120,7 +140,9 @@ void Server::receivedata(int &i)
             if (line.empty())
                 continue;
             Command cmd(line);
-            execute_cmd(cmd, *clients[fds[i].fd], *this);
+            execute_cmd(cmd, *clients[tmpfd], *this);
+			if (!clients.count(tmpfd))
+				break ;
         }
         i++;
 	}
@@ -176,9 +198,9 @@ void Server::eventloop()
 	sa.sa_flags = 0;
 	sigaction(SIGINT, &sa, NULL);
     setsocket();
-    while (1)
+    while (!stop)
     {
-        if (poll(fds.data(), fds.size(), -1) > 0)
+        if (poll(&fds[0], fds.size(), -1) > 0)
         {
 			addclient();
         }
