@@ -59,7 +59,6 @@ void execute_nick(Command &cmd, Client &cl, Server &ser)
 
 void execute_pass(Command &cmd, Client &cl, Server &ser)
 {
-    std::cout << "IM HERE/n" << std::endl;
     if (cl.get_isregistred())
     {
         ser.sendmsg(cl.get_fd(), ":ircserv 462 * :You may not reregister\r\n");
@@ -90,7 +89,6 @@ void join_one(std::string first, std::string second, Client &cl, Server &ser)
     Channel *ch;
     if (it != ser.getmap().end())
     {
-        std::cout << "IM HERE IN JOIN\n";
         ch = it->second;
         if (ch->getclients().find(cl.get_nickname()) != ch->getclients().end())
             return;
@@ -102,7 +100,6 @@ void join_one(std::string first, std::string second, Client &cl, Server &ser)
         }
         if (ch->get_k())
         {
-            std::cout << "IM HERE IN JOIN\n";
             if (second.empty() || second != ch->get_key())
             {
                 ser.sendmsg(cl.get_fd(), ":ircserv 475 " + cl.get_nickname() + " " + first + " :Cannot join channel (+k)\r\n");
@@ -546,7 +543,6 @@ void execute_mode(Command &cmd, Client &cl, Server &ser)
         {
             if (adding)
             {
-                std::cout << "ana hna f adding\n";
                 if (arg_index >= (int)cmd.getparams().size())
                 {
                     ser.sendmsg(cl.get_fd(), ":ircserv 461 " + cl.get_nickname() + " MODE :Not enough parameters\r\n");
