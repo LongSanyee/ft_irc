@@ -37,7 +37,7 @@ void Server::setsocket()
 	if (server_fd < 0)
 	{
 		perror("socket error");
-		std::exit(1);
+		std::exit(errno);
 	}
 	fcntl(server_fd, F_SETFL, O_NONBLOCK);
 	struct sockaddr_in addr;
@@ -47,12 +47,12 @@ void Server::setsocket()
 	if (bind(server_fd, (struct sockaddr*)&addr, sizeof(addr)) < 0)
 	{
 		perror("bind error");
-		exit(1);
+		exit(errno);
 	}
 	if (listen(server_fd, SOMAXCONN) < 0)
 	{
 		perror("listen error");
-		exit(1);
+		exit(errno);
 	}
 	struct pollfd tmp;
 	tmp.fd = server_fd;

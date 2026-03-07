@@ -238,6 +238,11 @@ void execute_quit(Command &cmd, Client &cl, Server &ser)
 
 void execute_privmsg(Command &cmd, Client &cl, Server &ser)
 {
+    if (!cl.get_isregistred())
+    {
+        ser.sendmsg(cl.get_fd(), ":ircserv 451 " + cl.get_nickname() + " :You have not registered\r\n");
+        return;
+    }
     if (cmd.getparams().size() < 2)
     {
         if (cmd.getparams().size() == 1)

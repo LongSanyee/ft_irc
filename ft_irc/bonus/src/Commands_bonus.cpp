@@ -639,6 +639,81 @@ void execute_mode(Command &cmd, Client &cl, Server &ser)
 
 }
 
+void execute_topic(Command &cmd, Client &cl, Server &ser)
+{
+    if (cmd.getparams().empty())
+    {
+        ser.sendmsg(cl.get_fd(), ":ircserv 461 "+cl.get_nickname()+" TOPIC :Not enough parameters\r\n");
+        return;
+    }
+    if (cmd.getparams().size() == 1)
+    {
+        std::map<std::string, Channel *>::iterator it = ser.getmap().find(cmd.getparams()[0]);
+        std::string channelname = cmd.getparams()[0];
+        if (it != ser.getmap().end())
+        {
+           std::map<std::string, Client *>::iterator iter = it->second->getclients().find(cl.get_nickname());
+           if (iter != it->second->getclients().end())
+           {
+                if (it->second->gettopic().empty())
+                    ser.sendmsg(cl.get_fd(), ":ircserv 331 "+cl.get_nickname()+" "+channelname+" :No topic is set\r\n");
+                else
+                    ser.sendmsg(cl.get_fd(), ":ircserv 332 "+cl.get_nickname()+" "+channelname+" :"+it->second->gettopic()+"\r\n");
+                return;
+           }
+           else
+           {
+                ser.sendmsg(cl.get_fd(), ":ircserv 442 "+cl.get_nickname()+" "+channelname+" :You're not on that channel\r\n");
+                return ;
+           }
+        }
+        else
+        {
+            ser.sendmsg(cl.get_fd(), ":ircserv 403 "+cl.get_nickname()+" "+channelname+" :No such channel\r\n");
+            return ;
+        }
+    }
+    std::string channelname = cmd.getparams()[0];
+    std::string channeltopic = cmd.getparams()[1];
+    std::string clientnick = cl.get_nickname();
+    std::map<std::string, Channel *>::iterator it = ser.getmap().find(channelname);
+    if (it == ser.getmap().end())
+    {
+        ser.sendmsg(cl.get_fd(), ":ircserv 403 "+clientnick+" "+channelname+" :No such channel\r\n");
+        return;
+    }
+    else
+    {
+        std::map<std::string, Client *>::iterator iter = it->second->getclients().find(clientnick);
+        if (iter != it->second->getclients().end())
+        {
+            std::map<std::string, int>::iterator t = cl.getclchannels().find(channelname);
+            if (t == cl.getclchannels().end())
+            {
+                ser.sendmsg(cl.get_fd(), ":ircserv 442 " + clientnick + " " + channelname + " :You're not on that channel\r\n");
+                return;
+            }
+            if (it->second->get_t() && t->second == 2)
+            {
+                it->second->settopic(channeltopic);
+                it->second->sendtoall(ser, ":"+clientnick+"!"+cl.get_username()+"@"+cl.gethost()+" TOPIC "+channelname+" :"+channeltopic+"\r\n");
+                return ;
+            }
+            else if (it->second->get_t() && t->second != 2)
+            {
+                ser.sendmsg(cl.get_fd(), ":ircserv 482 "+clientnick+" "+channelname+" :You're not a channel operator\r\n");
+                return ;
+            }
+            else
+            {
+                it->second->settopic(channeltopic);
+                it->second->sendtoall(ser, ":"+clientnick+"!"+cl.get_username()+"@"+cl.gethost()+" TOPIC "+channelname+" :"+channeltopic+"\r\n");
+                return ;
+            }
+        }
+    }
+}
+
 void execute_user(Command &cmd, Client &cl, Server &ser)
 {
     if (!cl.get_hasPass())
@@ -677,7 +752,7 @@ void execute_cmd(Command &cmd, Client &cl, Server &ser)
     else if (cmd.getcmd() == "PRIVMSG") {execute_privmsg(cmd,cl,ser);}
     else if (cmd.getcmd() == "KICK" ) {execute_kick(cmd, cl, ser);}
     else if (cmd.getcmd() == "INVITE" ){execute_invite(cmd, cl, ser);}
-    else if (cmd.getcmd() == "TOPIC" ){}
+    else if (cmd.getcmd() == "TOPIC" ){execute_topic(cmd, cl, ser);}
     else if (cmd.getcmd() == "MODE") {execute_mode(cmd, cl, ser);}
 
 }

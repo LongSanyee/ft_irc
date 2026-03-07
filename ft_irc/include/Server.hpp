@@ -13,6 +13,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <cstdlib>
+#include <signal.h>
 #include <map>
 #include <iostream>
 #include <unistd.h>
@@ -39,6 +40,7 @@ public:
     Client*  getclientbynick(const std::string &nickname);
     std::map<std::string, Channel *> &getmap();
     std::map<int, Client *> &getclients();
+    static void signalhandler(int sig);
 private:
     std::vector<struct pollfd> fds;
     std::map<int, Client*> clients;
@@ -46,6 +48,7 @@ private:
     int server_fd;
     int port;
     std::string password;
+    static bool stop;
 };
 
 void execute_cmd(Command &cmd, Client &cl, Server &ser);

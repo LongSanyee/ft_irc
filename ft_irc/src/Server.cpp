@@ -1,8 +1,17 @@
 #include "../include/Server.hpp"
 
+bool Server::stop = false;
+
 std::map<int, Client *> &Server::getclients()
 {
 	return clients;
+}
+
+
+void Server::signalhandler(int sig)
+{
+	(void)sig;
+	Server::stop = true;
 }
 
 Server::Server(char *port, char *pass)
@@ -14,7 +23,21 @@ Server::Server(char *port, char *pass)
 
 Server::~Server()
 {
-
+	std::map<int, Client *>::iterator it = clients.begin();
+	while (it != clients.end())
+	{
+		close(it->first);
+		delete it->second;
+		it++;
+	}
+	// std::map<std::string, Channel *>::iterator iter = channels.begin();
+	// for (;iter != channels.end(); iter++)
+	// {
+	// 	iter-
+	// }
+	close(server_fd);
+	clients.clear();
+	fds.clear();
 }
 
 void Server::sendmsg(int fd, std::string message)
@@ -37,7 +60,7 @@ void Server::setsocket()
 	if (server_fd < 0)
 	{
 		perror("socket error");
-		std::exit(1);
+		std::exit(errno);
 	}
 	fcntl(server_fd, F_SETFL, O_NONBLOCK);
 	struct sockaddr_in addr;
@@ -47,12 +70,12 @@ void Server::setsocket()
 	if (bind(server_fd, (struct sockaddr*)&addr, sizeof(addr)) < 0)
 	{
 		perror("bind error");
-		exit(1);
+		exit(errno);
 	}
 	if (listen(server_fd, SOMAXCONN) < 0)
 	{
 		perror("listen error");
-		exit(1);
+		exit(errno);
 	}
 	struct pollfd tmp;
 	tmp.fd = server_fd;
@@ -147,6 +170,11 @@ void Server::addclient()
 
 void Server::eventloop()
 {
+	struct sigaction sa;
+	sa.sa_handler = signalhandler;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	sigaction(SIGINT, &sa, NULL);
     setsocket();
     while (1)
     {
