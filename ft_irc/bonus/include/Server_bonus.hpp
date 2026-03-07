@@ -1,15 +1,15 @@
-#ifndef SERVER_HPP
-#define SERVER_HPP
+#ifndef SERVER_BONUS_HPP
+#define SERVER_BONUS_HPP
 
-#include "Channel.hpp"
+#include "Channel_bonus.hpp"
 #include <fcntl.h>
 #include <vector>
-#include "Command.hpp"
+#include "Command_bonus.hpp"
 #include <sys/socket.h>
 #include <poll.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include "Client.hpp"
+#include "Client_bonus.hpp"
 #include <errno.h>
 #include <stdio.h>
 #include <cstdlib>

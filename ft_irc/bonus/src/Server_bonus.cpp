@@ -1,4 +1,4 @@
-#include "../include/Server.hpp"
+#include "../include/Server_bonus.hpp"
 
 std::map<int, Client *> &Server::getclients()
 {
@@ -113,9 +113,9 @@ void Server::addclient(int &i)
 	socklen_t t = sizeof(temp);
 	int fd = accept(fds[i].fd, (sockaddr *)&temp, &t);
 	char *addr = inet_ntoa(temp.sin_addr);
+	fcntl(fd, F_SETFL, O_NONBLOCK);
 	if (fd >= 0)
 	{
-		fcntl(fd, F_SETFL, O_NONBLOCK);
 		struct pollfd n;
 		n.fd = fd;
 		n.events = POLLIN;

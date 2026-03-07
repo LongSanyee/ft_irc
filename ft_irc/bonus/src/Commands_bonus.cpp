@@ -1,8 +1,8 @@
-#include "../include/Channel.hpp"
-#include "../include/Client.hpp"
-#include "../include/Server.hpp"
-#include "../include/irc.hpp"
-#include "../include/Command.hpp"
+#include "../include/Channel_bonus.hpp"
+#include "../include/Client_bonus.hpp"
+#include "../include/Server_bonus.hpp"
+#include "../include/irc_bonus.hpp"
+#include "../include/Command_bonus.hpp"
 #include <sstream>
     
 
@@ -272,6 +272,41 @@ void execute_privmsg(Command &cmd, Client &cl, Server &ser)
     }
     else
     {
+        if (cmd.getparams()[0] == "Wompus")
+        {
+            if (cmd.getparams()[1] == "/help")
+            {
+                    std::string p = ":wompus!bot@localhost";
+                    std::string n = cl.get_nickname();
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : Hey there! I'm Wompus, your IRC helper!\r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : \r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : CONNECTION\r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  PASS <password>            - Authenticate with the server\r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  NICK <nickname>             - Set or change your nickname\r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  USER <user> 0 * :<realname> - Set your username (once)\r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  QUIT [:<message>]           - Disconnect from the server\r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : \r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : MESSAGING\r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  PRIVMSG <target> :<message> - Send a message to a user or channel\r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : \r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : CHANNELS\r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  JOIN <#channel> [key]       - Join a channel\r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  PART <#channel> [:<reason>] - Leave a channel\r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  TOPIC <#channel> [:<topic>] - View or set the channel topic\r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  KICK <#ch> <user> [:<why>]  - Kick a user from a channel\r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  INVITE <user> <#channel>    - Invite a user to a channel\r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : \r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  CHANNEL MODES (operators only)\r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  MODE <#channel> +i          - Invite-only channel\r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  MODE <#channel> +t          - Only ops can change topic\r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  MODE <#channel> +k <key>    - Set a channel password\r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  MODE <#channel> +o <nick>   - Give operator status\r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  MODE <#channel> +l <limit>  - Set user limit\r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : \r\n");
+                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : Wompus out! Have fun chatting!\r\n");
+                    return;
+            }
+        }
         std::string message = ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" PRIVMSG "+chann+" :"+cmd.getparams()[1];
         std::map<int, Client *> &tmp = ser.getclients();
         std::map<int, Client *>::iterator it = tmp.begin();
@@ -635,59 +670,6 @@ void execute_user(Command &cmd, Client &cl, Server &ser)
     }
 }
 
-void execute_topic(Command &cmd, Client &cl, Server &ser)
-{
-    if (cmd.getparams().empty())
-    {
-        ser.sendmsg(cl.get_fd(), ":ircserv 461 "+cl.get_nickname()+" TOPIC :Not enough parameters\r\n");
-        return;
-    }
-    if (cmd.getparams().size() == 1)
-    {
-        std::map<std::string, Channel *>::iterator it = ser.getmap().find(cmd.getparams()[0]);
-        std::string channelname = cmd.getparams()[0];
-        if (it != ser.getmap().end())
-        {
-           std::map<std::string, Client *>::iterator iter = it->second->getclients().find(cl.get_nickname());
-           if (iter != it->second->getclients().end())
-           {
-                if (it->second->gettopic().empty())
-                    ser.sendmsg(cl.get_fd(), ":ircserv 331 "+cl.get_nickname()+" "+channelname+" :No topic is set\r\n");
-                else
-                    ser.sendmsg(cl.get_fd(), ":ircserv 332 "+cl.get_nickname()+" "+channelname+" :"+it->second->gettopic()+"\r\n");
-                return;
-           }
-           else
-           {
-                ser.sendmsg(cl.get_fd(), ":ircserv 442 "+cl.get_nickname()+" "+channelname+" :You're not on that channel\r\n");
-                return ;
-           }
-        }
-        else
-        {
-            ser.sendmsg(cl.get_fd(), ":ircserv 403 "+cl.get_nickname()+" "+channelname+" :No such channel\r\n");
-            return ;
-        }
-    }
-    std::string channelname = cmd.getparams()[0];
-    std::string channeltopic = cmd.getparams()[1];
-    std::string clientnick = cl.get_nickname();
-    std::map<std::string, Channel *>::iterator it = ser.getmap().find(channelname);
-    if (it == ser.getmap().end())
-    {
-        ser.sendmsg(cl.get_fd(), ":ircserv 403 "+clientnick+" "+channelname+" :No such channel\r\n");
-        return;
-    }
-    else
-    {
-        std::map<std::string, Client *>::iterator iter = it->second->getclients().find(clientnick);
-        if (iter != it->second->getclients().end())
-        {
-            if (it->second->get_t())
-        }
-    }
-}
-
 void execute_cmd(Command &cmd, Client &cl, Server &ser)
 {
     if (cmd.getcmd() == "PASS") {execute_pass(cmd,cl,ser);}
@@ -699,7 +681,7 @@ void execute_cmd(Command &cmd, Client &cl, Server &ser)
     else if (cmd.getcmd() == "PRIVMSG") {execute_privmsg(cmd,cl,ser);}
     else if (cmd.getcmd() == "KICK" ) {execute_kick(cmd, cl, ser);}
     else if (cmd.getcmd() == "INVITE" ){execute_invite(cmd, cl, ser);}
-    else if (cmd.getcmd() == "TOPIC" ){execute_topic(cmd,cl,ser);}
+    else if (cmd.getcmd() == "TOPIC" ){}
     else if (cmd.getcmd() == "MODE") {execute_mode(cmd, cl, ser);}
 
 }

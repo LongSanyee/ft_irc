@@ -1,4 +1,4 @@
-#include "../include/irc.hpp"
+#include "../include/irc_bonus.hpp"
 
 int invalid(std::string t)
 {
