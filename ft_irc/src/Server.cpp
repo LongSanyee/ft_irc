@@ -68,6 +68,12 @@ void Server::setsocket()
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(this->port);
 	addr.sin_addr.s_addr = INADDR_ANY;
+	int opt = 1;
+	if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+	{
+	    perror("setsockopt");
+	    exit(errno);
+	}
 	if (bind(server_fd, (struct sockaddr*)&addr, sizeof(addr)) < 0)
 	{
 		perror("bind error");
