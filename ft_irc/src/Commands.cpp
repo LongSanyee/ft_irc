@@ -44,6 +44,13 @@ void execute_nick(Command &cmd, Client &cl, Server &ser)
     }
     if (cl.get_isregistred())
     {
+        std::map<std::string , int>::iterator it = cl.getclchannels().begin();
+        for (;it != cl.getclchannels().end(); it++)
+        {
+            std::map<std::string, Channel *>::iterator iter = ser.getmap().find(it->first);
+            if (iter != ser.getmap().end() )
+                iter->second->sendtoall(ser, ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost() + "NICK : "+cmd.getparams()[0]);
+        }
         cl.set_nickname(cmd.getparams()[0]);
         return ;
     }
