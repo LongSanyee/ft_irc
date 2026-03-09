@@ -7,16 +7,13 @@
 #include "Command.hpp"
 #include <sys/socket.h>
 #include <poll.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
 #include "Client.hpp"
 #include <errno.h>
 #include <stdio.h>
-#include <cstdlib>
 #include <signal.h>
 #include <map>
 #include <iostream>
-#include <unistd.h>
 #include <algorithm>
 
 class Client;

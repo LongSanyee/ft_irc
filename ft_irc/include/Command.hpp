@@ -1,10 +1,6 @@
 #ifndef COMMAND_HPP
 #define COMMAND_HPP
 
-#define ERR_NEEDMOREPARAMS 461
-#define ERR_PASSWDMISMATCH 464
-#define ERR_ALREADYREGISTRED 462
-
 #include "irc.hpp"
 
 

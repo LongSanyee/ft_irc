@@ -6,6 +6,39 @@
 #include <sstream>
     
 
+void sendbotmsg(Client cl, Server ser)
+{
+        std::string p = ":wompus!bot@localhost";
+        std::string n = cl.get_nickname();
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : Hey there! I'm Wompus, your IRC helper!\r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : \r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : CONNECTION\r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  PASS <password>            - Authenticate with the server\r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  NICK <nickname>             - Set or change your nickname\r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  USER <user> 0 * :<realname> - Set your username (once)\r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  QUIT [:<message>]           - Disconnect from the server\r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : \r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : MESSAGING\r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  PRIVMSG <target> :<message> - Send a message to a user or channel\r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : \r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : CHANNELS\r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  JOIN <#channel> [key]       - Join a channel\r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  PART <#channel> [:<reason>] - Leave a channel\r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  TOPIC <#channel> [:<topic>] - View or set the channel topic\r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  KICK <#ch> <user> [:<why>]  - Kick a user from a channel\r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  INVITE <user> <#channel>    - Invite a user to a channel\r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : \r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  CHANNEL MODES (operators only)\r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  MODE <#channel> +i          - Invite-only channel\r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  MODE <#channel> +t          - Only ops can change topic\r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  MODE <#channel> +k <key>    - Set a channel password\r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  MODE <#channel> +o <nick>   - Give operator status\r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  MODE <#channel> +l <limit>  - Set user limit\r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : \r\n");
+        ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : Wompus out! Have fun chatting!\r\n");
+        return;
+}
+
 
 bool valid_nick(std::string nm)
 {
@@ -285,35 +318,8 @@ void execute_privmsg(Command &cmd, Client &cl, Server &ser)
         {
             if (cmd.getparams()[1] == "/help")
             {
-                    std::string p = ":wompus!bot@localhost";
-                    std::string n = cl.get_nickname();
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : Hey there! I'm Wompus, your IRC helper!\r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : \r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : CONNECTION\r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  PASS <password>            - Authenticate with the server\r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  NICK <nickname>             - Set or change your nickname\r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  USER <user> 0 * :<realname> - Set your username (once)\r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  QUIT [:<message>]           - Disconnect from the server\r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : \r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : MESSAGING\r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  PRIVMSG <target> :<message> - Send a message to a user or channel\r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : \r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : CHANNELS\r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  JOIN <#channel> [key]       - Join a channel\r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  PART <#channel> [:<reason>] - Leave a channel\r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  TOPIC <#channel> [:<topic>] - View or set the channel topic\r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  KICK <#ch> <user> [:<why>]  - Kick a user from a channel\r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  INVITE <user> <#channel>    - Invite a user to a channel\r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : \r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  CHANNEL MODES (operators only)\r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  MODE <#channel> +i          - Invite-only channel\r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  MODE <#channel> +t          - Only ops can change topic\r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  MODE <#channel> +k <key>    - Set a channel password\r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  MODE <#channel> +o <nick>   - Give operator status\r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " :  MODE <#channel> +l <limit>  - Set user limit\r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : \r\n");
-                    ser.sendmsg(cl.get_fd(), p + " PRIVMSG " + n + " : Wompus out! Have fun chatting!\r\n");
-                    return;
+                sendbotmsg(cl, ser);
+                return;
             }
         }
         std::string message = ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" PRIVMSG "+chann+" :"+cmd.getparams()[1];
