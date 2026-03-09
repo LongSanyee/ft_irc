@@ -24,7 +24,7 @@ $(NAME): $(OBJ)
 bonus: $(BONUS_OBJ)
 		$(C++) $(CFLAGS) $(BONUS_OBJ) -o $(NAME)
 
-%.o: %.cpp
+%.o: %.cpp #TODO relink
 		$(C++) $(CFLAGS) -c $< -o $@
 
 clean:
@@ -34,5 +34,3 @@ fclean: clean
 		rm -rf $(NAME)
 
 re: fclean all
-
-rebonus: fclean bonus

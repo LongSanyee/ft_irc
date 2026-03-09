@@ -127,6 +127,9 @@ void join_one(std::string first, std::string second, Client &cl, Server &ser)
     else
     {
         ch = new Channel();
+        ch->set_key(second);
+        if (second != "")
+            ch->set_k(true);
         ch->setname(first);
         ser.getmap()[first] =ch;
         cl.getclchannels()[first] = 2;

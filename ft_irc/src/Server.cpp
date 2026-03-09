@@ -90,7 +90,7 @@ void Server::disconnect_client(int fd)
     for (size_t i = 0; i < fds.size(); i++)
     {
         if (fds[i].fd == fd)
-        {
+        {	
             std::swap(fds[i], fds[fds.size() - 1]);
             fds.pop_back();
             break ;
