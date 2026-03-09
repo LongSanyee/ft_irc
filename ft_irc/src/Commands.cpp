@@ -48,7 +48,7 @@ void execute_nick(Command &cmd, Client &cl, Server &ser)
         for (;it != cl.getclchannels().end(); it++)
         {
             std::map<std::string, Channel *>::iterator iter = ser.getmap().find(it->first);
-            if (iter != ser.getmap().end() )
+            if (iter != ser.getmap().end())
                 iter->second->sendtoall(ser, ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost() + "NICK : "+cmd.getparams()[0]);
         }
         cl.set_nickname(cmd.getparams()[0]);
@@ -63,6 +63,7 @@ void execute_nick(Command &cmd, Client &cl, Server &ser)
         ser.sendmsg(cl.get_fd(), ":ircserv 001 "+cl.get_nickname()+" :Welcome to the Internet Relay Chat Network "+tmp);
     }
 }
+
 
 void execute_pass(Command &cmd, Client &cl, Server &ser)
 {
@@ -152,6 +153,8 @@ void join_one(std::string first, std::string second, Client &cl, Server &ser)
 
 std::vector<std::string> split_cmd(std::string str)
 {
+    if (str[0] == ',')
+        str = '-' + str;
     std::stringstream first(str);
     std::string s;
     std::vector<std::string> tokens;
@@ -183,7 +186,8 @@ void execute_join(Command &cmd, Client &cl, Server &ser)
         {
             std::string chname = it->first;
             it++;
-            Channel *ch = ser.getmap()[chname];
+            std::map<std::string, Channel *>::iterator ll= ser.getmap().find(chname);
+            Channel *ch = ll->second;
             ch->sendtoall(ser, ":" + cl.get_nickname() + "!" + cl.get_username() + "@" + cl.gethost() + " PART " + chname + "\r\n");
             ch->getclients().erase(cl.get_nickname());
             if (ch->getclients().empty())
@@ -203,10 +207,10 @@ void execute_join(Command &cmd, Client &cl, Server &ser)
     while (i < (int)ch_names.size())
     {
         std::string key = (i < (int)ch_keys.size()) ? ch_keys[i] : "";
+        std::cout <<ch_names[i] + " " << key <<std::endl;
         join_one(ch_names[i], key, cl, ser);
         i++;
     }
-    
 }
 
 
