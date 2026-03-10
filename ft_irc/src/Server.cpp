@@ -144,12 +144,13 @@ void Server::receivedata(int &i)
 			if (!clients.count(tmpfd))
 				break ;
         }
-        i++;
 	}
 	else if (n == 0)
 	{
 		disconnect_client(fds[i].fd);
 	}
+	else
+		i++;
 }
 
 void Server::addclient(int &i)
