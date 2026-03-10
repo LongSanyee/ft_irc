@@ -142,6 +142,8 @@ void Server::receivedata(int &i)
         while ((pos = data.find(delim)) != std::string::npos)
         {
             std::string line = data.substr(0, pos);
+			if (line.length() > 512)
+				line.erase(510, line.size());
             data.erase(0, pos + delim.size());
             if (line.empty())
                 continue;

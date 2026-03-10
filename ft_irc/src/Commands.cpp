@@ -291,49 +291,55 @@ void execute_privmsg(Command &cmd, Client &cl, Server &ser)
             ser.sendmsg(cl.get_fd(), ":ircserv 411 :No recipient given (PRIVMSG)\r\n");
         return ;
     }
-    std::string chann = cmd.getparams()[0];
-    if (chann[0] == '#')
+    std::vector<std::string> temp = split_cmd(cmd.getparams()[0]);
+    for (size_t i = 0; i < temp.size(); i++)
     {
-        std::string message = ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" PRIVMSG "+chann+" :"+cmd.getparams()[1];
-        std::map<std::string, Channel *>::iterator it = ser.getmap().find(chann);
-        if (it != ser.getmap().end())
+        std::string chann = temp[i];
+        if (chann[0] == '#')
         {
-            Channel *tmp = it->second;
-            if (tmp->getclients().find(cl.get_nickname()) == tmp->getclients().end())
+            std::string message = ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" PRIVMSG "+chann+" :"+cmd.getparams()[1];
+            std::map<std::string, Channel *>::iterator it = ser.getmap().find(chann);
+            if (it != ser.getmap().end())
             {
+                Channel *tmp = it->second;
+                if (tmp->getclients().find(cl.get_nickname()) == tmp->getclients().end())
+                {
+                    ser.sendmsg(cl.get_fd(), ":ircserv 404 "+cl.get_nickname()+" "+chann+" :No such nick/channel\r\n");
+                    return ;
+                }
+                std::map<std::string, Client *>::iterator iter = tmp->getclients().begin();
+                for (;iter != tmp->getclients().end(); ++iter)
+                {
+                    if (iter->second->get_fd() != cl.get_fd())
+                        ser.sendmsg(iter->second->get_fd(), message+"\r\n");
+                }
+            }
+        }
+        else
+        {
+            if (temp[i] == "Wompus")
+            {
+                if (cmd.getparams()[1] == "/help")
+                {
+                    sendbotmsg(cl, ser);
+                    return;
+                }
+            }
+            std::string message = ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" PRIVMSG "+chann+" :"+cmd.getparams()[1];
+            std::map<int, Client *> &tmp = ser.getclients();
+            std::map<int, Client *>::iterator it = tmp.begin();
+            int flag = 0;
+            for (;it != tmp.end(); ++it)
+            {
+                if (chann == it->second->get_nickname())
+                {
+                    ser.sendmsg(it->second->get_fd(), message+"\r\n");
+                    flag = 1;
+                }
+            }
+            if (flag == 0)
                 ser.sendmsg(cl.get_fd(), ":ircserv 404 "+cl.get_nickname()+" "+chann+" :No such nick/channel\r\n");
-                return ;
-            }
-            std::map<std::string, Client *>::iterator iter = tmp->getclients().begin();
-            for (;iter != tmp->getclients().end(); ++iter)
-            {
-                if (iter->second->get_fd() != cl.get_fd())
-                    ser.sendmsg(iter->second->get_fd(), message+"\r\n");
-            }
         }
-    }
-    else
-    {
-        if (cmd.getparams()[0] == "Wompus")
-        {
-            if (cmd.getparams()[1] == "/help")
-            {
-                sendbotmsg(cl, ser);
-                return;
-            }
-        }
-        std::string message = ":"+cl.get_nickname()+"!"+cl.get_username()+"@"+cl.gethost()+" PRIVMSG "+chann+" :"+cmd.getparams()[1];
-        std::map<int, Client *> &tmp = ser.getclients();
-        std::map<int, Client *>::iterator it = tmp.begin();
-        for (;it != tmp.end(); ++it)
-        {
-            if (chann == it->second->get_nickname())
-            {
-                ser.sendmsg(it->second->get_fd(), message+"\r\n");
-                return;
-            }
-        }
-        ser.sendmsg(cl.get_fd(), ":ircserv 404 "+cl.get_nickname()+" "+chann+" :No such nick/channel\r\n");
     }
 }
 
